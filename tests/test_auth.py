@@ -11,10 +11,18 @@ import httpie.cli.definition
 
 
 def test_basic_auth(httpbin_both):
-    r = http('--auth=user:password',
-             'GET', httpbin_both + '/basic-auth/user/password')
-    assert HTTP_OK in r
-    assert r.json == {'authenticated': True, 'user': 'user'}
+    import requests
+    import time
+    for attempt in range(4):
+        try:
+            r = http('--auth=user:password', 'GET', httpbin_both + '/basic-auth/user/password')
+            assert HTTP_OK in r
+            assert r.json == {'authenticated': True, 'user': 'user'}
+            break
+        except requests.exceptions.ConnectionError:
+            if attempt == 3:
+                raise
+            time.sleep(1)
 
 
 @pytest.mark.parametrize('argument_name', ['--auth-type', '-A'])
