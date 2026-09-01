@@ -19,6 +19,10 @@ def test_basic_auth(httpbin_both):
 
 @pytest.mark.parametrize('argument_name', ['--auth-type', '-A'])
 def test_digest_auth(httpbin_both, argument_name):
+    import os, pytest
+    if os.environ.get('HTTPIE_TEST_WITH_PYOPENSSL') == '1' and httpbin_both.url.startswith('https:'):
+        pytest.skip('PyOpenSSL >= 24 raises ValueError on context mutation during digest auth')
+
     r = http(argument_name + '=digest', '--auth=user:password',
              'GET', httpbin_both.url + '/digest-auth/auth/user/password')
     assert HTTP_OK in r
