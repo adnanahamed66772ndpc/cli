@@ -1,9 +1,9 @@
 import pytest
-pytestmark = pytest.mark.skip(reason="Broken with new pip")
-import pytest
 
 from httpie.status import ExitStatus
 from tests.utils.plugins_cli import parse_listing
+
+pytestmark = pytest.mark.skip(reason="Broken with new pip")
 
 
 @pytest.mark.requires_installation
